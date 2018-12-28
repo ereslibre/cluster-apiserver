@@ -23,11 +23,11 @@ import (
 
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
-	"github.com/ereslibre/ereslibre-apiserver/pkg/apiserver"
-	"github.com/ereslibre/ereslibre-apiserver/pkg/apis/ereslibre/v1alpha1"
+	"github.com/ereslibre/cluster-apiserver/pkg/apiserver"
+	"github.com/ereslibre/cluster-apiserver/pkg/apis/cluster/v1alpha1"
 )
 
-const defaultEtcdPathPrefix = "/registry/ereslibre.kubernetes.io"
+const defaultEtcdPathPrefix = "/registry/cluster.kubernetes.io"
 
 type ServerOptions struct {
 	RecommendedOptions *genericoptions.RecommendedOptions
@@ -38,7 +38,7 @@ func NewServerOptions(out, errOut io.Writer) *ServerOptions {
 		RecommendedOptions: genericoptions.NewRecommendedOptions(
 			defaultEtcdPathPrefix,
 			apiserver.Codecs.LegacyCodec(v1alpha1.SchemeGroupVersion),
-			genericoptions.NewProcessInfo("ereslibre-apiserver", "ereslibre"),
+			genericoptions.NewProcessInfo("cluster-apiserver", "cluster"),
 		),
 	}
 }

@@ -14,28 +14,28 @@
  * limitations under the License.
  **/
 
-package main
+package cluster
 
 import (
-	"flag"
-	"os"
-
-	"k8s.io/klog"
-
-	"github.com/ereslibre/cluster-apiserver/pkg/cmd/server"
-	genericapiserver "k8s.io/apiserver/pkg/server"
-	"k8s.io/apiserver/pkg/util/logs"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-func main() {
-	logs.InitLogs()
-	defer logs.FlushLogs()
+const GroupName = "cluster.k8s.io"
 
-	stopCh := genericapiserver.SetupSignalHandler()
-	options := server.NewServerOptions(os.Stdout, os.Stderr)
-	cmd := server.NewCommandStartServer(options, stopCh)
-	cmd.Flags().AddGoFlagSet(flag.CommandLine)
-	if err := cmd.Execute(); err != nil {
-		klog.Fatal(err)
-	}
+// SchemeGroupVersion is group version used to register these objects
+var SchemeGroupVersion = schema.GroupVersion{Group: GroupName, Version: runtime.APIVersionInternal}
+
+var (
+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
+	AddToScheme   = SchemeBuilder.AddToScheme
+)
+
+// Adds the list of known types to the given scheme.
+func addKnownTypes(scheme *runtime.Scheme) error {
+	scheme.AddKnownTypes(SchemeGroupVersion,
+		&User{},
+		&UserList{},
+	)
+	return nil
 }

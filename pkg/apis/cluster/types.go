@@ -14,28 +14,36 @@
  * limitations under the License.
  **/
 
-package main
+package cluster
 
-import (
-	"flag"
-	"os"
+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"k8s.io/klog"
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-	"github.com/ereslibre/cluster-apiserver/pkg/cmd/server"
-	genericapiserver "k8s.io/apiserver/pkg/server"
-	"k8s.io/apiserver/pkg/util/logs"
-)
+type UserList struct {
+	metav1.TypeMeta
+	metav1.ListMeta
 
-func main() {
-	logs.InitLogs()
-	defer logs.FlushLogs()
+	Items []User
+}
 
-	stopCh := genericapiserver.SetupSignalHandler()
-	options := server.NewServerOptions(os.Stdout, os.Stderr)
-	cmd := server.NewCommandStartServer(options, stopCh)
-	cmd.Flags().AddGoFlagSet(flag.CommandLine)
-	if err := cmd.Execute(); err != nil {
-		klog.Fatal(err)
-	}
+type UserSpec struct {
+	Username string
+	Password string
+	Role     string
+}
+
+type UserStatus struct {
+}
+
+// +genclient
+// +genclient:nonNamespaced
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+type User struct {
+	metav1.TypeMeta
+	metav1.ObjectMeta
+
+	Spec   UserSpec
+	Status UserStatus
 }

@@ -14,28 +14,8 @@
  * limitations under the License.
  **/
 
-package main
+// +k8s:deepcopy-gen=package
+// +groupName=cluster.k8s.io
 
-import (
-	"flag"
-	"os"
-
-	"k8s.io/klog"
-
-	"github.com/ereslibre/cluster-apiserver/pkg/cmd/server"
-	genericapiserver "k8s.io/apiserver/pkg/server"
-	"k8s.io/apiserver/pkg/util/logs"
-)
-
-func main() {
-	logs.InitLogs()
-	defer logs.FlushLogs()
-
-	stopCh := genericapiserver.SetupSignalHandler()
-	options := server.NewServerOptions(os.Stdout, os.Stderr)
-	cmd := server.NewCommandStartServer(options, stopCh)
-	cmd.Flags().AddGoFlagSet(flag.CommandLine)
-	if err := cmd.Execute(); err != nil {
-		klog.Fatal(err)
-	}
-}
+// Package api is the internal version of the API.
+package cluster

@@ -62,7 +62,7 @@ func (cfg *Config) Complete() CompletedConfig {
 }
 
 func (c completedConfig) New() (*APIServer, error) {
-	genericServer, err := c.GenericConfig.New("ereslibre-apiserver", genericapiserver.NewEmptyDelegate())
+	genericServer, err := c.GenericConfig.New("cluster-apiserver", genericapiserver.NewEmptyDelegate())
 	if err != nil {
 		return nil, err
 	}
