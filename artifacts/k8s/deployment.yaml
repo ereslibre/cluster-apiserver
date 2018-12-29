@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cluster
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: apiserver
+  namespace: cluster
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-apiserver-clusterrolebinding
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+subjects:
+- kind: ServiceAccount
+  name: apiserver
+  namespace: cluster
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: cluster-apiserver
+  namespace: cluster
+  labels:
+    apiserver: "true"
+spec:
+  replicas: 1
+  selector:
+    apiserver: "true"
+  template:
+    metadata:
+      labels:
+        apiserver: "true"
+    spec:
+      serviceAccountName: apiserver
+      containers:
+      - name: cluster-apiserver
+        image: cluster-apiserver:latest
+        imagePullPolicy: Never
+        command: [ "/cluster-apiserver", "--etcd-servers=http://localhost:2379" ]
+      - name: etcd
+        imagePullPolicy: Never
+        image: k8s.gcr.io/etcd:3.2.24
+        command: [ "etcd", "--advertise-client-urls=http://0.0.0.0:2379" ]
