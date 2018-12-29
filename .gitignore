@@ -1,2 +1,3 @@
 /cluster-apiserver
-*.tar.gz
+/vendor
+*.tar
