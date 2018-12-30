@@ -23,6 +23,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/apiserver/pkg/registry/rest"
+	"k8s.io/apiserver/pkg/authorization/authorizer"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 
 	"github.com/ereslibre/cluster-apiserver/pkg/apis/cluster"
@@ -71,6 +72,12 @@ type APIServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
 }
 
+type AnonymousAuthenticator struct {}
+
+func (auth AnonymousAuthenticator) Authorize(a authorizer.Attributes) (authorized authorizer.Decision, reason string, err error) {
+	return authorizer.DecisionAllow, "", nil
+}
+
 func (cfg *Config) Complete() CompletedConfig {
 	c := completedConfig{
 		cfg.GenericConfig.Complete(),
@@ -79,6 +86,10 @@ func (cfg *Config) Complete() CompletedConfig {
 	c.GenericConfig.Version = &version.Info{
 		Major: "1",
 		Minor: "0",
+	}
+
+	c.GenericConfig.Authorization = genericapiserver.AuthorizationInfo{
+		Authorizer: AnonymousAuthenticator{},
 	}
 
 	return CompletedConfig{&c}
