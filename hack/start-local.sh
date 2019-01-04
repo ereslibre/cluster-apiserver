@@ -15,4 +15,6 @@ if [ ! -f ${CERTS_PATH}/client.crt ]; then
   openssl x509 -req -days 3650 -in ${CERTS_PATH}/client.csr -CA ${CERTS_PATH}/ca.crt -CAkey ${CERTS_PATH}/ca.key -set_serial 01 -out ${CERTS_PATH}/client.crt
 fi
 
+docker run -d --name=etcd --net=host --rm k8s.gcr.io/etcd:3.2.24 etcd --advertise-client-urls=http://0.0.0.0:2379 &> /dev/null
+
 ${DIR}/../cluster-apiserver --secure-port 6443 --etcd-servers http://127.0.0.1:2379 --client-ca-file ${CERTS_PATH}/ca.crt --kubeconfig ${ARTIFACTS_PATH}/kubeconfig --authentication-kubeconfig ${ARTIFACTS_PATH}/kubeconfig --authorization-kubeconfig ${ARTIFACTS_PATH}/kubeconfig --authentication-tolerate-lookup-failure

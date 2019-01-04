@@ -111,7 +111,6 @@ func (c completedConfig) New() (*APIServer, error) {
 		"users": clusterregistry.RESTInPeace(userstorage.NewREST(Scheme, c.GenericConfig.RESTOptionsGetter)),
 	}
 
-
 	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
 		return nil, err
 	}

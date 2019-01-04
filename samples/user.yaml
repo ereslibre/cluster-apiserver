@@ -1,0 +1,4 @@
+apiVersion: cluster.k8s.io/v1alpha1
+kind: User
+username: some-username
+password: some-password
